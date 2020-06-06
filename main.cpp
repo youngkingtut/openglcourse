@@ -29,17 +29,20 @@ const float toRadians = 3.14f / 180.0f;
 static const char* vertexShader =
     "#version 330\n"
     "layout(location = 0) in vec3 position;\n"
+    "out vec4 vertexColor;\n"
     "uniform mat4 model;\n"
     "void main() {\n"
-    "   gl_Position = model * vec4(position, 1.0);\n"
+    "   gl_Position = model * vec4(position, 1.0);"
+    "   vertexColor = vec4(clamp(position.xy, 0.0f, 1.0f), 0.5f, 1.0f);\n"
     "}";
 
 // Fragment Shader
 static const char* fragmentShader =
     "#version 330\n"
+    "in vec4 vertexColor;"
     "out vec4 color;\n"
     "void main() {\n"
-    "   color = vec4(0.0, 0.2, 0.9, 1.0);\n"
+    "   color = vertexColor;\n"
     "}";
 
 
@@ -174,9 +177,9 @@ int main() {
         curAngle += 1;
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));
-        model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(triOffset, triOffset, 0.0));
+//        model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));
+//        model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(1.0, 1.0, 0.0));
 
 
         // clear the window
