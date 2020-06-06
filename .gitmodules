@@ -7,4 +7,4 @@
 [submodule "ext/glew"]
 	path = ext/glew
 	url = https://github.com/nigels-com/glew.git
-	ignore = dirty
+	ignore = all
