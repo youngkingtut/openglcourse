@@ -28,6 +28,8 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Shader.h
         ${PROJECT_SOURCE_DIR}/Window.cpp
         ${PROJECT_SOURCE_DIR}/Window.h
+        ${PROJECT_SOURCE_DIR}/Camera.cpp
+        ${PROJECT_SOURCE_DIR}/Camera.h
 )
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})

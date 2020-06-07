@@ -12,6 +12,8 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
+#include "Camera.h"
+
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
     auto *shader1 = new Shader();
@@ -57,6 +59,8 @@ int main() {
     auto window = Window();
     window.initialize();
 
+    auto camera = Camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), -90.0, 0);
+
     CreateObjects(&meshList);
     CreateShaders(&shaderList);
 
@@ -68,11 +72,21 @@ int main() {
         );
     GLuint modelLocation = shaderList[0]->GetModelLocation();
     GLuint projectionLocation = shaderList[0]->GetProjectionLocation();
+    GLuint viewLocation = shaderList[0]->GetViewLocation();
+
+    GLfloat deltaTime = 0.0f;
+    GLfloat lastTime = glfwGetTime();
 
     // Window loop
     while(!window.getShouldClose()) {
-        // get user input
+        GLfloat now = glfwGetTime();
+        deltaTime = now - lastTime;
+        lastTime = now;
+
+        // update user input
         glfwPollEvents();
+        camera.keyControl(window.getKeys(), deltaTime);
+        camera.mouseControl(window.getXChange(), window.getYChange());
 
         // Updating uniform
         if(xDirection) {
@@ -98,6 +112,9 @@ int main() {
         // draw
         shaderList[0]->UseShader();
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
+
+
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
         meshList[0]->RenderMesh();
 
