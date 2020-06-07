@@ -26,7 +26,9 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Mesh.h
         ${PROJECT_SOURCE_DIR}/Shader.cpp
         ${PROJECT_SOURCE_DIR}/Shader.h
-        src/Window.cpp src/Window.h)
+        ${PROJECT_SOURCE_DIR}/Window.cpp
+        ${PROJECT_SOURCE_DIR}/Window.h
+)
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})

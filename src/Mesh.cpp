@@ -30,7 +30,7 @@ void Mesh::CreateMesh(GLfloat *vertices, unsigned int *elements, unsigned int nu
     glBindVertexArray(0);
 }
 
-void Mesh::RenderMesh() {
+void Mesh::RenderMesh() const {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, nullptr);

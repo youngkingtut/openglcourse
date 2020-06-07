@@ -28,5 +28,5 @@ private:
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
     static void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
-    std::string ReadFile(const char* fileLocation);
+    static std::string ReadFile(const char* fileLocation);
 };

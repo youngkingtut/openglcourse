@@ -7,7 +7,7 @@ public:
     Mesh();
 
     void CreateMesh(GLfloat* vertices, unsigned int* elements, unsigned int numOfVertices, unsigned int numOfElements);
-    void RenderMesh();
+    void RenderMesh() const;
     void ClearMesh();
 
     ~Mesh();
