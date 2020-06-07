@@ -1,7 +1,7 @@
 ### Purpose
 Going through a series of lectures to re-enlighten my understanding of OpenGL.
 
-Lecture are found [here](https://www.udemy.com/course/graphics-with-modern-opengl/).
+Lectures are found [here](https://www.udemy.com/course/graphics-with-modern-opengl/).
 
 ### Setup
 
