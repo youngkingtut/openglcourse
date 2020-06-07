@@ -19,6 +19,23 @@ include_directories("${EXTERNAL_LIBRARIES}/glfw/include")
 include_directories("${EXTERNAL_LIBRARIES}/glm")
 
 # Create executable and link libraries
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(
+        ${PROJECT_NAME}
+        ${PROJECT_SOURCE_DIR}/main.cpp
+        ${PROJECT_SOURCE_DIR}/Mesh.cpp
+        ${PROJECT_SOURCE_DIR}/Mesh.h
+        ${PROJECT_SOURCE_DIR}/Shader.cpp
+        ${PROJECT_SOURCE_DIR}/Shader.h
+        src/Window.cpp src/Window.h)
+
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
+
+
+# Copy Resource Folder
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${CMAKE_SOURCE_DIR}/src/Resources
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Resources
+)
