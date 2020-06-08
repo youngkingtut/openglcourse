@@ -8,3 +8,6 @@
 	path = ext/glew
 	url = https://github.com/nigels-com/glew.git
 	ignore = all
+[submodule "ext/stb"]
+	path = ext/stb
+	url = https://github.com/nothings/stb

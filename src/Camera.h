@@ -28,7 +28,7 @@ private:
     GLfloat yaw{0};
     GLfloat pitch{0};
 
-    GLfloat moveSpeed{10};
+    GLfloat moveSpeed{2};
     GLfloat turnSpeed{0.1};
 
     void update();

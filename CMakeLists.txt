@@ -17,6 +17,7 @@ add_subdirectory("${EXTERNAL_LIBRARIES}/glm")
 include_directories("${EXTERNAL_LIBRARIES}/glew/include")
 include_directories("${EXTERNAL_LIBRARIES}/glfw/include")
 include_directories("${EXTERNAL_LIBRARIES}/glm")
+include_directories("${EXTERNAL_LIBRARIES}/stb")
 
 # Create executable and link libraries
 add_executable(
@@ -30,7 +31,7 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Window.h
         ${PROJECT_SOURCE_DIR}/Camera.cpp
         ${PROJECT_SOURCE_DIR}/Camera.h
-)
+        src/Texture.cpp src/Texture.h)
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})

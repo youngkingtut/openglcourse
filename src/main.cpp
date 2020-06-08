@@ -1,4 +1,6 @@
 #pragma ide diagnostic ignored "hicpp-signed-bitwise"
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <cmath>
 #include <vector>
 
@@ -13,6 +15,7 @@
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
+#include "Texture.h"
 
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
@@ -22,7 +25,7 @@ void CreateShaders(std::vector<Shader*>* shaderList) {
 }
 
 void CreateObjects(std::vector<Mesh*>* meshList) {
-    unsigned int indices[] = {
+    unsigned int elements[] = {
         0, 3, 1,
         1, 3, 2,
         2, 3, 0,
@@ -30,19 +33,20 @@ void CreateObjects(std::vector<Mesh*>* meshList) {
     };
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+        // x, y, z, u, v
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.5, 1.0f
     };
 
     Mesh* obj1 = new Mesh();
-    obj1->CreateMesh(vertices, indices, 12, 12);
+    obj1->CreateMesh(vertices, elements, 20, 12);
     meshList->push_back(obj1);
 
 
     Mesh* obj2 = new Mesh();
-    obj2->CreateMesh(vertices, indices, 12, 12);
+    obj2->CreateMesh(vertices, elements, 20, 12);
     meshList->push_back(obj2);
 }
 
@@ -59,6 +63,9 @@ int main() {
     auto window = Window();
     window.initialize();
 
+    auto brickTexture = Texture("Resources/Textures/brick.png");
+    brickTexture.LoadTexture();
+
     auto camera = Camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), -90.0, 0);
 
     CreateObjects(&meshList);
@@ -74,7 +81,7 @@ int main() {
     GLuint projectionLocation = shaderList[0]->GetProjectionLocation();
     GLuint viewLocation = shaderList[0]->GetViewLocation();
 
-    GLfloat deltaTime = 0.0f;
+    GLfloat deltaTime;
     GLfloat lastTime = glfwGetTime();
 
     // Window loop
@@ -102,7 +109,7 @@ int main() {
         curAngle += 1;
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-triOffset, 0.7f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.7f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0));
 
         // clear the window
@@ -113,13 +120,13 @@ int main() {
         shaderList[0]->UseShader();
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-
+        brickTexture.UseTexture();
 
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
         meshList[0]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(triOffset, -0.7f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, -0.7f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0));
 
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
