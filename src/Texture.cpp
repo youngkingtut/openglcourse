@@ -1,7 +1,5 @@
 #include "Texture.h"
 
-#include <utility>
-
 Texture::Texture(std::string fileLocation) {
     this->fileLocation = std::move(fileLocation);
 }

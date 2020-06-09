@@ -16,6 +16,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Light.h"
 
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
@@ -66,6 +67,8 @@ int main() {
     auto brickTexture = Texture("Resources/Textures/brick.png");
     brickTexture.LoadTexture();
 
+    auto light = Light(1.0f, 1.0f, 1.0f, 0.2f);
+
     auto camera = Camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), -90.0, 0);
 
     CreateObjects(&meshList);
@@ -80,6 +83,8 @@ int main() {
     GLuint modelLocation = shaderList[0]->GetModelLocation();
     GLuint projectionLocation = shaderList[0]->GetProjectionLocation();
     GLuint viewLocation = shaderList[0]->GetViewLocation();
+    GLuint colorLocation = shaderList[0]->GetAmbientColorLocation();
+    GLuint intensityLocation = shaderList[0]->GetAmbientIntensityLocation();
 
     GLfloat deltaTime;
     GLfloat lastTime = glfwGetTime();
@@ -113,11 +118,14 @@ int main() {
         model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0));
 
         // clear the window
-        glClearColor(0.2f, 0.0f, 0.4f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw
         shaderList[0]->UseShader();
+
+        light.UseLight(intensityLocation, colorLocation);
+
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
         brickTexture.UseTexture();

@@ -31,7 +31,11 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Window.h
         ${PROJECT_SOURCE_DIR}/Camera.cpp
         ${PROJECT_SOURCE_DIR}/Camera.h
-        src/Texture.cpp src/Texture.h)
+        ${PROJECT_SOURCE_DIR}/Texture.cpp
+        ${PROJECT_SOURCE_DIR}/Texture.h
+        ${PROJECT_SOURCE_DIR}/Light.cpp
+        ${PROJECT_SOURCE_DIR}/Light.h
+)
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
