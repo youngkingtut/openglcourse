@@ -43,6 +43,6 @@ void Texture::ClearTexture() {
         width = 0;
         height = 0;
         bitDepth = 0;
-        fileLocation = nullptr;
+        fileLocation = "";
     }
 }

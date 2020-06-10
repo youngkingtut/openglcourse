@@ -25,6 +25,44 @@ void CreateShaders(std::vector<Shader*>* shaderList) {
     shaderList->push_back(shader1);
 }
 
+void calcAverageNormals(const unsigned int* elements, unsigned int elementCount, GLfloat* vertices,
+                        unsigned int vertexCount, unsigned vertexLength, unsigned normalOffset) {
+    for(size_t i = 0; i < elementCount; i+=3) {
+        unsigned int in0 = elements[i] * vertexLength;
+        unsigned int in1 = elements[i + 1] * vertexLength;
+        unsigned int in2 = elements[i + 2] * vertexLength;
+
+        glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
+        glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
+        glm::vec3 normal = glm::normalize(glm::cross(v1, v2));
+
+        in0 += normalOffset;
+        in1 += normalOffset;
+        in2 += normalOffset;
+
+        vertices[in0] += normal.x;
+        vertices[in0+1] += normal.y;
+        vertices[in0+2] += normal.z;
+
+        vertices[in1] += normal.x;
+        vertices[in1+1] += normal.y;
+        vertices[in1+2] += normal.z;
+
+        vertices[in2] += normal.x;
+        vertices[in2+1] += normal.y;
+        vertices[in2+2] += normal.z;
+    }
+
+    for(size_t i = 0; i < vertexCount / vertexLength; i++) {
+        unsigned int nOffset = (i * vertexLength) + normalOffset;
+        glm::vec3 vec = glm::normalize(glm::vec3(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]));
+        vertices[nOffset] = vec.x;
+        vertices[nOffset+1] = vec.y;
+        vertices[nOffset+2] = vec.z;
+    }
+}
+
+
 void CreateObjects(std::vector<Mesh*>* meshList) {
     unsigned int elements[] = {
         0, 3, 1,
@@ -34,20 +72,22 @@ void CreateObjects(std::vector<Mesh*>* meshList) {
     };
 
     GLfloat vertices[] = {
-        // x, y, z, u, v
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.5, 1.0f
+    //      x,     y,    z,    u,    v,   nx,   ny,   nz
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f,  1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
     };
 
+    calcAverageNormals(elements, 12, vertices, 32, 8, 5);
+
     Mesh* obj1 = new Mesh();
-    obj1->CreateMesh(vertices, elements, 20, 12);
+    obj1->CreateMesh(vertices, elements, 32, 12);
     meshList->push_back(obj1);
 
 
     Mesh* obj2 = new Mesh();
-    obj2->CreateMesh(vertices, elements, 20, 12);
+    obj2->CreateMesh(vertices, elements, 32, 12);
     meshList->push_back(obj2);
 }
 
@@ -67,7 +107,7 @@ int main() {
     auto brickTexture = Texture("Resources/Textures/brick.png");
     brickTexture.LoadTexture();
 
-    auto light = Light(1.0f, 1.0f, 1.0f, 0.2f);
+    auto light = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
 
     auto camera = Camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), -90.0, 0);
 
@@ -83,8 +123,10 @@ int main() {
     GLuint modelLocation = shaderList[0]->GetModelLocation();
     GLuint projectionLocation = shaderList[0]->GetProjectionLocation();
     GLuint viewLocation = shaderList[0]->GetViewLocation();
-    GLuint colorLocation = shaderList[0]->GetAmbientColorLocation();
+    GLuint colorLocation = shaderList[0]->GetColorLocation();
     GLuint intensityLocation = shaderList[0]->GetAmbientIntensityLocation();
+    GLuint directionLocation = shaderList[0]->GetDirectionLocation();
+    GLuint diffuseIntensityLocation = shaderList[0]->GetDiffuseIntensityLocation();
 
     GLfloat deltaTime;
     GLfloat lastTime = glfwGetTime();
@@ -124,7 +166,7 @@ int main() {
         // draw
         shaderList[0]->UseShader();
 
-        light.UseLight(intensityLocation, colorLocation);
+        light.UseLight(intensityLocation, colorLocation, directionLocation, diffuseIntensityLocation);
 
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
