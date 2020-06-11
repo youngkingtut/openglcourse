@@ -17,6 +17,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Light.h"
+#include "Material.h"
 
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
@@ -73,10 +74,10 @@ void CreateObjects(std::vector<Mesh*>* meshList) {
 
     GLfloat vertices[] = {
     //      x,     y,    z,    u,    v,   nx,   ny,   nz
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-         0.0f,  1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f,  1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+         1.0f, -1.0f,  0.6f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f,  1.0f,  0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
     };
 
     calcAverageNormals(elements, 12, vertices, 32, 8, 5);
@@ -101,13 +102,15 @@ int main() {
     std::vector<Mesh*> meshList;
     std::vector<Shader*> shaderList;
 
-    auto window = Window();
+    auto window = Window(1366, 768);
     window.initialize();
 
     auto brickTexture = Texture("Resources/Textures/brick.png");
     brickTexture.LoadTexture();
 
-    auto light = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
+    auto light = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.3f);
+    auto shinyMaterial = Material(1.0f, 32);
+    auto dullMaterial = Material(0.2f, 4);
 
     auto camera = Camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), -90.0, 0);
 
@@ -127,6 +130,9 @@ int main() {
     GLuint intensityLocation = shaderList[0]->GetAmbientIntensityLocation();
     GLuint directionLocation = shaderList[0]->GetDirectionLocation();
     GLuint diffuseIntensityLocation = shaderList[0]->GetDiffuseIntensityLocation();
+    GLuint eyeLocation = shaderList[0]->GetEyePostions();
+    GLuint specularIntensityLocation = shaderList[0]->GetSpecularIntensity();
+    GLuint shininessLocation = shaderList[0]->GetShininess();
 
     GLfloat deltaTime;
     GLfloat lastTime = glfwGetTime();
@@ -156,8 +162,7 @@ int main() {
         curAngle += 1;
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.7f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0));
+        model = glm::translate(model, glm::vec3(0.0f, 1.7f, -2.5f));
 
         // clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -170,14 +175,18 @@ int main() {
 
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
+        glUniform3f(eyeLocation, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+
         brickTexture.UseTexture();
+        shinyMaterial.UseMaterial(specularIntensityLocation, shininessLocation);
 
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
         meshList[0]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -0.7f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0));
+        model = glm::translate(model, glm::vec3(0.0f, -1.7f, -2.5f));
+
+        dullMaterial.UseMaterial(specularIntensityLocation, shininessLocation);
 
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
         meshList[1]->RenderMesh();
