@@ -35,7 +35,7 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Texture.h
         ${PROJECT_SOURCE_DIR}/Light.cpp
         ${PROJECT_SOURCE_DIR}/Light.h
-        src/Material.cpp src/Material.h)
+        src/Material.cpp src/Material.h src/DirectionalLight.cpp src/DirectionalLight.h src/PointLight.cpp src/PointLight.h src/CommonValues.h)
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
