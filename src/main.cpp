@@ -19,6 +19,7 @@
 #include "Material.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "CommonValues.h"
 
 
@@ -126,11 +127,16 @@ int main() {
     auto brickTexture = Texture("Resources/Textures/brick.png");
     brickTexture.LoadTexture();
 
-    unsigned int pointLightCount = 2;
     auto directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.1f, 2.0f, -1.0f, -2.0f, 0.2f);
+
+    unsigned int pointLightCount = 0;
     PointLight pointLights[MAX_POINT_LIGHTS];
     pointLights[0] = PointLight(1.0f, 0.0f, 0.0f, 0.1f, 1.0f, -4.0f, 0.0f, 0.0f, 0.3f, 0.2f, 0.1f);
     pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 0.1f, 1.0f, 4.0f, 0.0f, 0.0f, 0.3f, 0.1f, 0.1f);
+
+    unsigned int spotLightCount = 1;
+    SpotLight spotLights[MAX_SPOT_LIGHTS];
+    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 0.1f, 1.0f, -4.0f, 0.0f, 0.0f, 1.0f, 0.2f, 0.1f, 0.0f, -1.0f, 0.0f, 20.0f);
 
     auto shinyMaterial = Material(1.0f, 32);
     auto dullMaterial = Material(0.2f, 4);
@@ -190,8 +196,13 @@ int main() {
         // draw
         shaderList[0]->UseShader();
 
+        glm::vec3 lowerPosition = camera.getCameraPosition();
+        lowerPosition.y -= 0.3f;
+        spotLights[0].SetFlash(lowerPosition, camera.getCameraDirection());
+
         shaderList[0]->SetDirectionalLight(&directionalLight);
         shaderList[0]->SetPointLights(pointLights, pointLightCount);
+        shaderList[0]->SetSpotLights(spotLights, spotLightCount);
 
         glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
