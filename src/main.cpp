@@ -11,16 +11,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "CommonValues.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
 #include "Material.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "CommonValues.h"
 
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
