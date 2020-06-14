@@ -12,12 +12,14 @@ set(EXTERNAL_LIBRARIES ext)
 add_subdirectory("${EXTERNAL_LIBRARIES}/glew/build/cmake")
 add_subdirectory("${EXTERNAL_LIBRARIES}/glfw")
 add_subdirectory("${EXTERNAL_LIBRARIES}/glm")
+add_subdirectory("${EXTERNAL_LIBRARIES}/assimp")
 
 # Include ext
 include_directories("${EXTERNAL_LIBRARIES}/glew/include")
 include_directories("${EXTERNAL_LIBRARIES}/glfw/include")
 include_directories("${EXTERNAL_LIBRARIES}/glm")
 include_directories("${EXTERNAL_LIBRARIES}/stb")
+include_directories("${EXTERNAL_LIBRARIES}/assimp/include")
 
 # Create executable and link libraries
 add_executable(
@@ -35,11 +37,20 @@ add_executable(
         ${PROJECT_SOURCE_DIR}/Texture.h
         ${PROJECT_SOURCE_DIR}/Light.cpp
         ${PROJECT_SOURCE_DIR}/Light.h
-        src/Material.cpp src/Material.h src/DirectionalLight.cpp src/DirectionalLight.h src/PointLight.cpp src/PointLight.h src/CommonValues.h src/SpotLight.cpp src/SpotLight.h)
+        ${PROJECT_SOURCE_DIR}/Material.cpp
+        ${PROJECT_SOURCE_DIR}/Material.h
+        ${PROJECT_SOURCE_DIR}/DirectionalLight.cpp
+        ${PROJECT_SOURCE_DIR}/DirectionalLight.h
+        ${PROJECT_SOURCE_DIR}/PointLight.cpp
+        ${PROJECT_SOURCE_DIR}/PointLight.h
+        ${PROJECT_SOURCE_DIR}/CommonValues.h
+        ${PROJECT_SOURCE_DIR}/SpotLight.cpp
+        ${PROJECT_SOURCE_DIR}/SpotLight.h
+        src/Model.cpp src/Model.h)
 
 target_link_libraries(${PROJECT_NAME} glew ${GLEW_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
-
+target_link_libraries(${PROJECT_NAME} assimp ${ASSIMP_LIBRARIES})
 
 # Copy Resource Folder
 add_custom_command(

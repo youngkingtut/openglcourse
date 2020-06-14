@@ -21,6 +21,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Model.h"
 
 
 void CreateShaders(std::vector<Shader*>* shaderList) {
@@ -125,7 +126,7 @@ int main() {
     window.initialize();
 
     auto brickTexture = Texture("Resources/Textures/brick.png");
-    brickTexture.LoadTexture();
+    brickTexture.LoadTextureA();
 
     auto directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.1f, 2.0f, -1.0f, -2.0f, 0.2f);
 
@@ -145,6 +146,12 @@ int main() {
 
     CreateObjects(&meshList);
     CreateShaders(&shaderList);
+
+    Model xWing = Model();
+    Model blackHawk = Model();
+
+    xWing.LoadModel("Resources/Models/x-wing.obj");
+
 
     glm::mat4 projection = glm::perspective(
         45.0f,
@@ -229,6 +236,15 @@ int main() {
 
         glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
         meshList[2]->RenderMesh();
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.001f, 0.001, 0.001f));
+        shinyMaterial.UseMaterial(specularIntensityLocation, shininessLocation);
+        glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+        xWing.RenderModel();
+
+
 
         glUseProgram(0);
 

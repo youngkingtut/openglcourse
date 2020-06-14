@@ -10,7 +10,9 @@ public:
     explicit Texture(std::string fileLocation);
     ~Texture();
 
-    void LoadTexture();
+    bool LoadTexture();
+    bool LoadTextureA();
+
     void UseTexture() const;
     void ClearTexture();
 
